@@ -13,21 +13,23 @@ migrate = Migrate(app, db)
 
 db.init_app(app)
 
-@app.route('/')
-def home():
-    return '<h1>Zoo app</h1>'
-
+# Assuming this is in your main Flask app file 
 @app.route('/animal/<int:id>')
 def animal_by_id(id):
-    return ''
+    animal = Animal.query.get_or_404(id)
+    return f"<ul><li>Name: {animal.name}</li><li>Species: {animal.species}</li><li>Zookeeper: {animal.zookeeper.name}</li><li>Enclosure: {animal.enclosure.environment}</li></ul>"
 
 @app.route('/zookeeper/<int:id>')
 def zookeeper_by_id(id):
-    return ''
+    zookeeper = Zookeeper.query.get_or_404(id)
+    animals_list = ''.join([f"<li>{animal.name}</li>" for animal in zookeeper.animals])
+    return f"<ul><li>Name: {zookeeper.name}</li><li>Birthday: {zookeeper.birthday.strftime('%Y-%m-%d')}</li>{animals_list}</ul>"
 
 @app.route('/enclosure/<int:id>')
 def enclosure_by_id(id):
-    return ''
+    enclosure = Enclosure.query.get_or_404(id)
+    animals_list = ''.join([f"<li>{animal.name}</li>" for animal in enclosure.animals])
+    return f"<ul><li>Environment: {enclosure.environment}</li><li>Open to Visitors: {'Yes' if enclosure.open_to_visitors else 'No'}</li>{animals_list}</ul>"
 
 
 if __name__ == '__main__':
